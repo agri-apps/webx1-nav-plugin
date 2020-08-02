@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webx1 Nav Plugin Demo</title>
+    <style>
+        .page {
+            text-align: center;
+            padding: 40px;
+            background-color: #f1f1f1;
+        }
+
+        nav>ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border: 1px solid #ccc;
+        }
+
+        nav>ul li {
+            padding: 6px 12px;
+        }
+
+        nav>ul li a {
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+
+        nav>ul li a.active:after,
+        nav>ul li a.active--red:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: -4px;
+            left: 0;
+            background-color: #333;
+        }
+
+        nav>ul li a.active--red:after {
+            background-color: red !important;
+        }
+
+        nav>ul li a:hover:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: -4px;
+            left: 0;
+            background-color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Webx1 Nav Plugin Demo</h1>
+    <hr>
+    <section>
+        <h2>Highlighted Links</h2>
+        <nav>
+            <ul>
+                <li><a data-route="home" href="/">Home</a></li>
+                <li><a data-route="link1" href="/link1">Link 1</a></li>
+                <li><a data-route="link2" href="/link2">Link 2</a></li>
+                <li><a data-route="link3" href="/link3">Link 3</a></li>
+                <li><a href="/missing">Missing Link</a></li>
+            </ul>
+        </nav>
+    </section>
+    <div id="demo1"></div>
+
+    <script src="https://unpkg.com/webx1@1.0.7/dist/webx1.umd.js"></script>
+    <script src="scripts/webx1-nav-plugin.umd.js"></script>
+    <script>
+        const historyView = ({ history = [] }) => `<div class="history"><h4>HISTORY - ${history.length}</h4>
+                <div>${history.map(x => `<div>${JSON.stringify(x)}</div>`).join('')}
+            
+                </div>
+                ${history.length ? `<p><a href="#" id="clearAction">Clear History</a></p>` : '<a id="clearAction"></a>'}
+            </div>`
+        webx1({
+            appName: 'Nav Plugin Demo',
+            routes: {
+                '/': {
+                    view: (state) => `<div class="page"><h2>Home</h2>${historyView(state)}</div>`,
+                    name: 'home',
+                    meta: { title: 'Home' }
+                },
+                '/link1': {
+                    view: (state) => `<div class="page"><h2>Link 1</h2>${historyView(state)}</div>`,
+                    name: 'link1',
+                    meta: { title: 'Link 1' }
+                },
+                '/link2': {
+                    view: (state) => `<div class="page"><h2>Link 2</h2>${historyView(state)}</div>`,
+                    name: 'link2',
+                    meta: { title: 'Link 2' }
+                },
+                '/link3': {
+                    view: (state) => `<div class="page"><h2>Link 3</h2>${historyView(state)}</div>`,
+                    name: 'link3',
+                    activeClass: 'active--red',
+                    meta: { title: 'Link 3' }
+                },
+                '/notfound': {
+                    view: () => '<div class="page"><h2>404 Not Found :(</h2></div>'
+                }
+            },
+            metaTitlePrepend: 'Nav Plugin Demo - '
+        }).then(app => {
+            app.use(
+                webx1NavPlugin, 
+                { 
+                    historyKey: 'history', 
+                    session: true, 
+                    onPrefetch: (route, ...rest) => { console.log('prefecth', route, rest) } 
+                })
+
+            app.mount(document.querySelector('#demo1'))
+                .then(app => {
+                    window.app = app;
+
+                    app.listen((type) => {
+                        if (type !== 'pageChange') { return; }
+                        let clearAction = app.el.querySelector('#clearAction');
+                        clearAction.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            sessionStorage.setItem('history', JSON.stringify([]));
+                            app.setState('history', []);
+                            app.refresh();
+                        })
+                    })
+                })
+
+        })
+    </script>
+</body>
+
+</html>

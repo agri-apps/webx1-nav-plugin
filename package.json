@@ -1,0 +1,35 @@
+{
+  "name": "webx1-nav-plugin",
+  "version": "0.0.1",
+  "description": "Webx1 plugin for navigation.",
+  "source": "lib/index.js",
+  "main": "dist/webx1-nav-plugin.js",
+  "module": "dist/webx1-nav-plugin.module.js",
+  "unpkg": "dist/webx1-nav-plugin.umd.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run build:main && npm run build:umd",
+    "build:main": "microbundle",
+    "build:umd": "microbundle --name webx1NavPlugin --pkg-main false -f umd",    
+    "clean": "rm -rf dist && rm -rf demo/scripts/*",
+    "copy:assets": "cp dist/*.umd* demo/scripts",
+    "serve": "live-server ./demo --entry-file=index.html",
+    "demo": "npm run build && npm run copy:assets && npm run serve",
+    "prepublish": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webx1",
+    "navigation",
+    "plugin"
+  ],
+  "author": "john robinson <johnrob1880@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "microbundle": "^0.12.3"
+  },
+  "dependencies": {}
+}
