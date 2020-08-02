@@ -1,6 +1,6 @@
 {
   "name": "webx1-nav-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Webx1 plugin for navigation.",
   "source": "lib/index.js",
   "main": "dist/webx1-nav-plugin.js",

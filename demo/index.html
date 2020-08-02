@@ -58,6 +58,7 @@
             background-color: #ccc;
         }
     </style>
+    <script src="flash.js"></script>
 </head>
 
 <body>
@@ -121,7 +122,13 @@
                 { 
                     historyKey: 'history', 
                     session: true, 
-                    onPrefetch: (route, ...rest) => { console.log('prefecth', route, rest) } 
+                    onPrefetch: (route, ...rest) => { 
+                        console.log('prefecth', route, rest) 
+                        window.flash(`Prefetching "${route ? route.name : '?'}"`);
+                    },
+                    installed: () => {
+                        window.flash('Webx1 nav plugin installed!');
+                    } 
                 })
 
             app.mount(document.querySelector('#demo1'))
@@ -136,6 +143,7 @@
                             sessionStorage.setItem('history', JSON.stringify([]));
                             app.setState('history', []);
                             app.refresh();
+                            window.flash('History cleared!');
                         })
                     })
                 })
